@@ -12,7 +12,7 @@
 Clone the project:
 
 ```bash
-git clone https://github.com/Brandon-Roff/Boiler-Plates.git
+git clone https://github.com/Nerdy-Technician/Boiler-Plates.git
 cd Boiler-Plates
 ```
 
