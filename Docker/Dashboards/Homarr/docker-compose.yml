@@ -1,0 +1,29 @@
+#---------------------------------------------------------------------#
+#     Homarr - A simple, yet powerful dashboard for your server.     #
+#---------------------------------------------------------------------#
+version: '3'
+
+services:
+  homarr:
+    container_name: Homarr-Dashboard
+    image: ghcr.io/homarr-labs/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - ./appdata:/appdata
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY}
+    ports:
+      - "${HOMARR_PORT}:7575"
+    networks:
+      - ${DOCKER_NETWORK}
+
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider ${HOMARR_URL}"
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  ${DOCKER_NETWORK}:
+    external: true
