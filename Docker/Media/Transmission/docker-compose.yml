@@ -5,7 +5,7 @@ services:
     container_name: Transmission-Bittorrent
     hostname: Transmission-Bittorrent
     healthcheck: # Docker Health check
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:6767/health"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9091/transmission/web/"]
       interval: 30s
       timeout: 10s
       retries: 5

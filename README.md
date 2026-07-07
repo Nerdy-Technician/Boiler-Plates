@@ -16,6 +16,25 @@ git clone https://github.com/Nerdy-Technician/Boiler-Plates.git
 cd Boiler-Plates
 ```
 
+## Quick Start
+
+Most Docker stacks follow the same pattern:
+
+```bash
+cd Docker/Media
+cp .env.example .env
+nano .env
+docker network create Media
+docker compose up -d
+```
+
+Notes:
+- Copy `.env.example` to `.env` before starting stacks that include one.
+- Adjust paths, time zone, user IDs, passwords, and ports before exposing services.
+- Some stacks use an external Docker network; create it first or change the network name in `.env`.
+- For older hosts, `docker-compose up -d` may be used instead of `docker compose up -d`.
+- Use the [Stack Catalog](STACKS.md) when deciding which template to start from.
+
 ## 📑 Table of Contents
 1. Boilerplate Index
 2. Media Stack (Docker)
@@ -56,9 +75,16 @@ Install them all with the MediaBox [Docker Compose Template](Docker/Media/docker
 
 | Category | Path | Notes |
 | :-- | :-- | :-- |
+| Backup | `Docker/Backup/Borgmatic/docker-compose.yml` | Scheduled Borg/Borgmatic backup starter |
 | Database | `Docker/Database/docker-compose.yml` | Add Postgres / MySQL / Redis services |
+| Dashboards | `Docker/Dashboards/Homarr/docker-compose.yml` | Homarr dashboard starter |
 | Monitoring | `Docker/Monitoring/docker-compose.yml` | Prometheus + Grafana placeholder |
+| Uptime | `Docker/Monitoring/Uptime-Kuma/docker-compose.yml` | Uptime Kuma status and alerting |
+| Passwords | `Docker/Security/Vaultwarden/docker-compose.yml` | Vaultwarden password manager |
+| Documents | `Docker/Selfhosted-365/Paperless-ngx/docker-compose.yml` | Paperless-ngx document management |
 | Web | `Docker/Web/docker-compose.yml` | Generic reverse proxy starter |
+
+See the Docker-specific [template guide](Docker/README.md) for conventions and workflow notes.
 
 ### 5. Config Boilerplates
 
@@ -85,6 +111,28 @@ docker compose up -d
 ```
 
 Add labels to app containers for Traefik routing (see stack README). Apply Fail2Ban filters then restart service.
+
+## Validate Templates
+
+Run the full validation suite:
+
+```bash
+make validate
+```
+
+If Docker Compose is available and you want to run the Compose check directly:
+
+```bash
+find Docker -name 'docker-compose.y*ml' -print0 \
+  | xargs -0 -I{} sh -c 'cd "$(dirname "$1")" && docker compose -f "$(basename "$1")" config --quiet' sh {}
+```
+
+For a syntax-only check with Python/PyYAML:
+
+```bash
+find Docker -name 'docker-compose.y*ml' -print0 \
+  | xargs -0 -I{} python3 -c 'import sys, yaml; yaml.safe_load(open(sys.argv[1])); print(sys.argv[1])' {}
+```
 
 ## 7. 🛤️ Roadmap
 
@@ -120,4 +168,3 @@ Please keep examples minimal and well-commented.
 GPLv3 — see badge above.
 
 Optimizations depend per project.
-

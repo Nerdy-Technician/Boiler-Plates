@@ -1,0 +1,22 @@
+name: Validate Templates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --upgrade pyyaml
+
+      - name: Validate templates
+        run: bash tools/validate.sh

@@ -1,0 +1,33 @@
+# Local environment files
+.env
+*.env
+!.env.example
+
+# Runtime data created by compose examples
+Appdata/
+appdata/
+config/
+data/
+downloads/
+watch/
+grafana/
+mariadb/
+mongo/
+mysql/
+postgres/
+redis/
+timescaledb/
+influxdb/
+onlyoffice-logs/
+onlyoffice-data/
+draw-io_data/
+html/
+custom_apps/
+themes/
+db/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

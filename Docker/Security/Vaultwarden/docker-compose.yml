@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:${VAULTWARDEN_TAG:-latest}
+    container_name: ${VAULTWARDEN_NAME:-vaultwarden}
+    restart: unless-stopped
+    environment:
+      - DOMAIN=${VAULTWARDEN_DOMAIN:-https://vault.example.com}
+      - SIGNUPS_ALLOWED=${VAULTWARDEN_SIGNUPS_ALLOWED:-false}
+      - INVITATIONS_ALLOWED=${VAULTWARDEN_INVITATIONS_ALLOWED:-true}
+      - WEBSOCKET_ENABLED=${VAULTWARDEN_WEBSOCKET_ENABLED:-true}
+      - LOG_LEVEL=${VAULTWARDEN_LOG_LEVEL:-warn}
+      - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN:-}
+    ports:
+      - "${VAULTWARDEN_PORT_HOST:-8088}:80"
+    volumes:
+      - "${VAULTWARDEN_DATA_PATH:-./data}:/data"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/alive"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - ${NETWORK_NAME:-vaultwarden-net}
+
+networks:
+  ${NETWORK_NAME:-vaultwarden-net}:
+    driver: bridge

@@ -1,0 +1,82 @@
+version: "3.9"
+
+services:
+  broker:
+    image: redis:${REDIS_TAG:-7-alpine}
+    container_name: ${REDIS_NAME:-paperless-redis}
+    restart: unless-stopped
+    networks:
+      - ${NETWORK_NAME:-paperless-net}
+
+  db:
+    image: postgres:${POSTGRES_TAG:-16-alpine}
+    container_name: ${POSTGRES_NAME:-paperless-postgres}
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-paperless}
+      - POSTGRES_USER=${POSTGRES_USER:-paperless}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-paperless}
+    volumes:
+      - "${POSTGRES_DATA_PATH:-./postgres}:/var/lib/postgresql/data"
+    networks:
+      - ${NETWORK_NAME:-paperless-net}
+
+  gotenberg:
+    image: gotenberg/gotenberg:${GOTENBERG_TAG:-latest}
+    container_name: paperless-gotenberg
+    restart: unless-stopped
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      - ${NETWORK_NAME:-paperless-net}
+
+  tika:
+    image: apache/tika:${TIKA_TAG:-latest}
+    container_name: paperless-tika
+    restart: unless-stopped
+    networks:
+      - ${NETWORK_NAME:-paperless-net}
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:${PAPERLESS_TAG:-latest}
+    container_name: ${PAPERLESS_NAME:-paperless}
+    restart: unless-stopped
+    depends_on:
+      - broker
+      - db
+      - gotenberg
+      - tika
+    ports:
+      - "${PAPERLESS_PORT_HOST:-8010}:8000"
+    environment:
+      - PAPERLESS_REDIS=redis://broker:6379
+      - PAPERLESS_DBHOST=db
+      - PAPERLESS_DBNAME=${POSTGRES_DB:-paperless}
+      - PAPERLESS_DBUSER=${POSTGRES_USER:-paperless}
+      - PAPERLESS_DBPASS=${POSTGRES_PASSWORD:-paperless}
+      - PAPERLESS_SECRET_KEY=${PAPERLESS_SECRET_KEY:-change-me-generate-a-long-random-string}
+      - PAPERLESS_TIME_ZONE=${PAPERLESS_TIME_ZONE:-Europe/London}
+      - PAPERLESS_OCR_LANGUAGE=${PAPERLESS_OCR_LANGUAGE:-eng}
+      - PAPERLESS_URL=${PAPERLESS_URL:-https://paperless.example.com}
+      - PAPERLESS_TIKA_ENABLED=1
+      - PAPERLESS_TIKA_GOTENBERG_ENDPOINT=http://gotenberg:3000
+      - PAPERLESS_TIKA_ENDPOINT=http://tika:9998
+    volumes:
+      - "${PAPERLESS_DATA_PATH:-./data}:/usr/src/paperless/data"
+      - "${PAPERLESS_MEDIA_PATH:-./media}:/usr/src/paperless/media"
+      - "${PAPERLESS_EXPORT_PATH:-./export}:/usr/src/paperless/export"
+      - "${PAPERLESS_CONSUME_PATH:-./consume}:/usr/src/paperless/consume"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - ${NETWORK_NAME:-paperless-net}
+
+networks:
+  ${NETWORK_NAME:-paperless-net}:
+    driver: bridge

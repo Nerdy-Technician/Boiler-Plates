@@ -1,7 +1,7 @@
 version: '3.9'
 services:
     linuxserver:
-        image: lscr.io/linuxserver/Lidarr:latest
+        image: lscr.io/linuxserver/lidarr:latest
         restart: always
         volumes:
             - './config:/config' # Point to config folder you may want a volume 

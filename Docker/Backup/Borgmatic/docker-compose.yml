@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  borgmatic:
+    image: b3vis/borgmatic:latest
+    container_name: borgmatic-backup
+    restart: unless-stopped
+    environment:
+      - TZ=${BORG_TZ:-Europe/London}
+      - BORG_REPOSITORY=${BORG_REPOSITORY:-ssh://backup@example.com/./repos/homelab}
+      - BORG_PASSPHRASE=${BORG_PASSPHRASE:-change-me}
+      - BORG_SOURCE_PATHS=${BORG_SOURCE_PATHS:-/source}
+      - BORG_EXCLUDE_PATTERNS=${BORG_EXCLUDE_PATTERNS:-/source/**/cache,/source/**/tmp}
+      - BORG_KEEP_DAILY=${BORG_KEEP_DAILY:-7}
+      - BORG_KEEP_WEEKLY=${BORG_KEEP_WEEKLY:-4}
+      - BORG_KEEP_MONTHLY=${BORG_KEEP_MONTHLY:-6}
+      - HEALTHCHECK_URL=${BORG_HEALTHCHECK_URL:-}
+      - CRON=${BORG_CRON:-0 3 * * *}
+    volumes:
+      - "${BORG_DATA_PATH:-./config}:/etc/borgmatic.d"
+      - "${BORG_CACHE_PATH:-./cache}:/root/.cache/borg"
+      - "${BORG_SSH_PATH:-./ssh}:/root/.ssh:ro"
+      - "${BACKUP_SOURCE_PATH:-/srv}:/source:ro"
+    healthcheck:
+      test: ["CMD", "borgmatic", "--version"]
+      interval: 1h
+      timeout: 30s
+      retries: 3

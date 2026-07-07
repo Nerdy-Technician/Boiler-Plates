@@ -1,3 +1,5 @@
 # Ensure workflows use LF endings to avoid heredoc delimiter issues
 *.yml text eol=lf
 *.yaml text eol=lf
+*.sh text eol=lf
+Makefile text eol=lf

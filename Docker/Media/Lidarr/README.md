@@ -52,23 +52,23 @@ The docker compose file will look like below
 version: '3.9'
 services:
     linuxserver:
-        image: lscr.io/linuxserver/Lidarr:latest
+        image: lscr.io/linuxserver/lidarr:latest
         restart: always
         volumes:
-            - './data:/config' # Point to config folder you may want a volume 
-            - '/Videos/Movies:/Movies' # Point to your Films or media
-            - '/Videos/TV:/TV' # Point to your Downloads
+            - './config:/config' # Point to config folder you may want a volume 
+            - '/Videos/Music:/Music' # Point to your music
+            - '/Downloads:/downloads' # Point to your Downloads
             - '/Archive/Backup:/backup' # Point to your backup/Archive
         environment:
             - TZ=Europe/London #Set you TZ
             - PGID=123 #your UUID
             - PUID=254 #your GUID
         ports:
-            - '6767:6767' # Change Left for host port change
-        container_name: Lidarr_Subtitles # Docker Container Name
-        hostname: Lidarr_Subtitles # Docker Hostname
+            - '8686:8686' # Change Left for host port change
+        container_name: Lidarr_Music # Docker Container Name
+        hostname: Lidarr_Music # Docker Hostname
         healthcheck: # Docker Health check
-          test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:6767/health"]
+          test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8686/health"]
           interval: 30s
           timeout: 10s
           retries: 5
