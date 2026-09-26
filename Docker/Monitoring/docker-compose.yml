@@ -9,7 +9,7 @@ services:
     ports:
       - "${PROMETHEUS_PORT_HOST:-9090}:9090"
     networks:
-      - ${NETWORK_NAME:-monitornet}
+      - monitornet
 
   grafana:
     image: grafana/grafana:${GRAFANA_TAG:-latest}
@@ -19,8 +19,9 @@ services:
     volumes:
       - "${GRAFANA_DATA_PATH:-./grafana}:/var/lib/grafana"
     networks:
-      - ${NETWORK_NAME:-monitornet}
+      - monitornet
 
 networks:
-  ${NETWORK_NAME:-monitornet}:
+  monitornet:
+    name: ${NETWORK_NAME:-monitornet}
     driver: bridge

@@ -26,7 +26,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   Radarr:
     image: lscr.io/linuxserver/radarr:${RADARR_TAG:-nightly}
@@ -52,7 +52,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:${FLARESOLVERR_TAG:-latest}
@@ -67,7 +67,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8191/ || exit 1"]
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   Bazarr:
     image: lscr.io/linuxserver/bazarr:${BAZARR_TAG:-latest}
@@ -92,7 +92,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:${ABS_TAG:-latest}
@@ -115,7 +115,7 @@ services:
       timeout: 10s
       retries: 3
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:${PROWLARR_TAG:-latest}
@@ -138,7 +138,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   tautulli:
     image: ghcr.io/tautulli/tautulli:${TAUTULLI_TAG:-latest}
@@ -160,7 +160,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   overseerr:
     image: lscr.io/linuxserver/overseerr:${OVERSEERR_TAG:-latest}
@@ -181,7 +181,7 @@ services:
       timeout: 10s
       retries: 3
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   dizquetv:
     image: vexorian/dizquetv:${DIZQUETV_TAG:-latest}
@@ -195,7 +195,7 @@ services:
     volumes:
       - "${APPDATA_ROOT}/DizqueTV/data:/home/node/app/.dizquetv"
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   plex:
     image: lscr.io/linuxserver/plex:${PLEX_TAG:-latest}
@@ -238,7 +238,7 @@ services:
       - "${APPDATA_ROOT}/YTMP4/subscriptions:/app/subscriptions"
       - "${APPDATA_ROOT}/YTMP4/users:/app/users"
     networks:
-      - ${NETWORK_NAME}
+      - media
 
   ytdl-mongo-db:
     image: mongo:${MONGO_TAG:-4}
@@ -249,8 +249,9 @@ services:
     volumes:
       - "${APPDATA_ROOT}/YTMP4/db:/data/db"
     networks:
-      - ${NETWORK_NAME}
+      - media
 
 networks:
-  ${NETWORK_NAME}:
+  media:
+    name: ${NETWORK_NAME}
     external: true

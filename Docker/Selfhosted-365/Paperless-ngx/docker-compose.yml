@@ -6,7 +6,7 @@ services:
     container_name: ${REDIS_NAME:-paperless-redis}
     restart: unless-stopped
     networks:
-      - ${NETWORK_NAME:-paperless-net}
+      - paperless-net
 
   db:
     image: postgres:${POSTGRES_TAG:-16-alpine}
@@ -19,7 +19,7 @@ services:
     volumes:
       - "${POSTGRES_DATA_PATH:-./postgres}:/var/lib/postgresql/data"
     networks:
-      - ${NETWORK_NAME:-paperless-net}
+      - paperless-net
 
   gotenberg:
     image: gotenberg/gotenberg:${GOTENBERG_TAG:-latest}
@@ -30,14 +30,14 @@ services:
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
     networks:
-      - ${NETWORK_NAME:-paperless-net}
+      - paperless-net
 
   tika:
     image: apache/tika:${TIKA_TAG:-latest}
     container_name: paperless-tika
     restart: unless-stopped
     networks:
-      - ${NETWORK_NAME:-paperless-net}
+      - paperless-net
 
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:${PAPERLESS_TAG:-latest}
@@ -75,8 +75,9 @@ services:
       retries: 5
       start_period: 60s
     networks:
-      - ${NETWORK_NAME:-paperless-net}
+      - paperless-net
 
 networks:
-  ${NETWORK_NAME:-paperless-net}:
+  paperless-net:
+    name: ${NETWORK_NAME:-paperless-net}
     driver: bridge
