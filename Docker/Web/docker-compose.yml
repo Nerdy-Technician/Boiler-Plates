@@ -10,7 +10,7 @@ services:
       - "${NGINX_CONF_PATH:-./nginx.conf}:/etc/nginx/nginx.conf:ro"
       - "${WEB_ROOT:-./web}:/usr/share/nginx/html:ro"
     networks:
-      - ${NETWORK_NAME:-webnet}
+      - webnet
 
   app:
     image: ${APP_IMAGE:-node:18}
@@ -20,8 +20,9 @@ services:
     volumes:
       - "${APP_SRC:-./src}:/app"
     networks:
-      - ${NETWORK_NAME:-webnet}
+      - webnet
 
 networks:
-  ${NETWORK_NAME:-webnet}:
+  webnet:
+    name: ${NETWORK_NAME:-webnet}
     driver: bridge

@@ -23,8 +23,9 @@ services:
       retries: 3
       start_period: 30s
     networks:
-      - ${NETWORK_NAME:-vaultwarden-net}
+      - vaultwarden-net
 
 networks:
-  ${NETWORK_NAME:-vaultwarden-net}:
+  vaultwarden-net:
+    name: ${NETWORK_NAME:-vaultwarden-net}
     driver: bridge

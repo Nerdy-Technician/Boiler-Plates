@@ -16,8 +16,9 @@ services:
       retries: 3
       start_period: 30s
     networks:
-      - ${NETWORK_NAME:-uptime-kuma-net}
+      - uptime-kuma-net
 
 networks:
-  ${NETWORK_NAME:-uptime-kuma-net}:
+  uptime-kuma-net:
+    name: ${NETWORK_NAME:-uptime-kuma-net}
     driver: bridge
